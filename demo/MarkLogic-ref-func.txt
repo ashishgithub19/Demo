@@ -21,7 +21,42 @@ http://marklogic.com/collation/en/S1  case/diacritic insensitive
 http://marklogic.com/collation/en/S2  diacritic sensitive
 http://marklogic.com/collation/en/S1/EO case sensitive
 
+
+Example:
+(: declare default collation "http://marklogic.com/collation//S2/MO"; :)
+let $xml :=
+<employee>
+  <emp id="1">
+   <name >Ram</name>
+   <phone_no>987543210</phone_no>
+    <salary>1010</salary>
+    <grade>1</grade>
+  </emp>
+  <emp id="2">
+   <name>Mohan</name>
+   <phone_no>887543210</phone_no>
+    <salary>60000</salary>
+    <grade>99</grade>
+  </emp>
+  <emp id="3">
+     <name>Mohan</name>
+     <phone_no>887543210</phone_no>
+      <salary>60000</salary>
+      <grade>100</grade>
+  </emp>
+</employee>
+for $eachEmp in $xml/emp 
+order by $eachEmp/grade  collation "http://marklogic.com/collation//S2/MO" 
+return $eachEmp
+
+
+
 2. Scheduled Task.
+
+i. Insert code 
+
+ let $doc := xdmp:document-get("C:\Users\NAME\Desktop\upload-hcl\demo\my_task.xqy")
+ return xdmp:document-insert("/scheduled/my_task.xqy",$doc,(),())
 
 MarLogic Specific Functions:
 

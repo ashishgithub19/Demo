@@ -61,7 +61,7 @@ xdmp:document-load("C:\Users\Desktop\myXml.xml",
 		  
 ref : https://docs.marklogic.com/xdmp:document-load
 OR
- let $doc := xdmp:document-get("C:\Users\nautiyal\Desktop\myXml.xml")
+ let $doc := xdmp:document-get("C:\Users\NAME\Desktop\myXml.xml")
  return xdmp:document-insert("/mydocs/myfile.xml",$doc,(),())
  
 		  

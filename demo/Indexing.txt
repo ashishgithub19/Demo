@@ -31,5 +31,10 @@ cts:json-property-word-match
 
 4. Path Range Indexes
 
+5. Field Indexes
+
+ cts:field-word-query, cts:field-value-query, cts:field-range-query, cts:field-words, and cts:field-word-match
+
+
 
 Database property "diacratic , sensitive searh"
