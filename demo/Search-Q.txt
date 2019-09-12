@@ -119,3 +119,18 @@ Stemmed
                       cts:element-value-query(xs:QName("description"), "Run","stemmed")
                       ))    
           )	 
+		  
+============cts:value Query ========
+
+mlcp.bat import -host localhost -port 8000 -database demo-db ^
+-username admin -password admin -input_file_type documents ^
+-document_type mixed -input_file_path C:\Users\NAME\Desktop\upload-hcl\demo\data\claims ^
+-output_uri_replace "^(.*data),''" -thread_count 8
+
+xdmp:document-add-collections(cts:uris((),(),cts:directory-query("/claims/", "1")), "Claims")
+
+cts:values(cts:path-reference("/person/address"),(),"ascending",
+										cts:and-query((
+													cts:collection-query("Claims"),
+													cts:element-value-query(xs:QName("name"),"Maria")
+													)))
