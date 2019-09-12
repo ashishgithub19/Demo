@@ -57,8 +57,54 @@ i. Insert code
 
  let $doc := xdmp:document-get("C:\Users\NAME\Desktop\upload-hcl\demo\my_task.xqy")
  return xdmp:document-insert("/scheduled/my_task.xqy",$doc,(),())
-
+=====================================================================
 MarLogic Specific Functions:
+
+1. xdmp:eval()  =>  evaluates the XQuery as string, run against the other database.
+i. insert into other db
+  let $xml:= <emp id="1">
+   <name >Ram</name>
+   <phone_no>987543210</phone_no>
+    <salary>50000</salary>
+    <address>
+       <ofc_add>Pune</ofc_add>
+       <home_add>Delhi</home_add>
+    </address>
+  </emp>
+  return xdmp:document-insert("/emp/1.xml",$xml,(),"EMP") 
+
+ ii.
+let $empId := "1"
+let $query := 'xquery version "1.0-ml";
+               declare variable $empId as xs:string external;
+               
+               fn:collection("EMP")/emp[@id[.=$empId]]
+              '
+ return xdmp:eval($query, (xs:QName("empId"),$empId),
+                         <options  xmlns="xdmp:eval">
+                           <database>{xdmp:database("demo-db")}</database>
+                         </options>
+                           )
+						   
+2. xdmp:invoke() => https://docs.marklogic.com/xdmp:invoke
+
+3. xdmp:spawn() =>
+
+ xdmp:spawn("/scheduled/my_task.xqy", (),
+        <options xmlns="xdmp:eval">
+          <modules>{xdmp:database("hcl-demo")}</modules>
+         </options>)
+
+		 
+4. fn:data() vs  text()
+
+let $xml := <res><name>Ram <surname>Gupta</surname></name></res>
+return $xml/fn:data(name) / $xml/name/text()
+
+let $textDoc := 
+text { "MarkLogic is as NoSql Database" }
+  return xdmp:document-insert("/text-doc.txt",$textDoc )
+
 
 curl -X POST --anyauth --user admin:admin -d @"./config.xml" ^
     -H "Content-type: application/xml" ^

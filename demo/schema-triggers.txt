@@ -30,6 +30,88 @@ iii. insert document
  
  Schema:
  ------------
+ 1. load schematron doc
+ xdmp:document-insert("/userSchema.sch",
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" 
+            queryBinding="xslt2" schemaVersion="1.0">
+<sch:title>user-validation</sch:title>
+<sch:phase id="phase1">
+  <sch:active pattern="structural"></sch:active>
+</sch:phase>
+<sch:phase id="phase2">
+  <sch:active pattern="co-occurence"></sch:active>
+</sch:phase>
+<sch:pattern id="structural">
+  <sch:rule context="user">
+    <sch:assert test="@id">user element should have an id attribute</sch:assert>
+    <sch:assert test="count(*) = 5">
+          user element should have 5 child elements: name, gender, 
+          age, score and result
+    </sch:assert>
+    <sch:assert test="score/@total">score element should have a total attribute</sch:assert>
+    <sch:assert test="score/count(*) = 2">score element should have two child elements</sch:assert>
+  </sch:rule>
+</sch:pattern>
+<sch:pattern id="co-occurence">
+  <sch:rule context="score">
+    <sch:assert test="@total = test-1 + test-2">
+         total score must be a sum of test-1 and test-2 scores
+    </sch:assert>
+    <sch:assert test="(@total gt 30 and ../result = 'pass') or  
+              (@total le 30 and ../result = 'fail')" diagnostics="d1">
+        if the score is greater than 30 then the result should be
+        'pass' else 'fail'  
+    </sch:assert>
+  </sch:rule>
+</sch:pattern>
+<sch:diagnostics>
+<sch:diagnostic id="d1">the score does not match with the result</sch:diagnostic>
+</sch:diagnostics>
+</sch:schema>)
+
+ii. to compile the userSchema.sch Schematron document and insert the generated validator XSLT into the Modules database.
+
+xquery version "1.0-ml"; 
+ 
+import module namespace schematron = "http://marklogic.com/xdmp/schematron" 
+      at "/MarkLogic/schematron/schematron.xqy";
+
+let $params := map:map()
+let $_put := map:put($params, 'phase', '#ALL')
+let $_put := map:put($params, 'terminate', fn:false())
+let $_put := map:put($params, 'generate-fired-rule', fn:true())
+let $_put := map:put($params, 'generate-paths', fn:true())
+let $_put := map:put($params, 'diagnose', fn:true())
+let $_put := map:put($params, 'allow-foreign', fn:false())
+let $_put := map:put($params, 'validate-schema', fn:true())
+return schematron:put("/userSchema.sch", $params)
+
+iii. load document
+let $doc := <user id="001">
+  <name>Alan</name>
+  <gender>Male</gender>
+  <age>14</age>
+  <score total="90">
+    <test-1>50</test-1>
+    <test-2>40</test-2>
+  </score>  
+  <result>fail</result> 
+</user>
+return 
+xdmp:document-insert("/schema-demo/user001.xml",$doc,(),())
+
+iv. validation
+xquery version "1.0-ml"; 
+ 
+import module namespace schematron = "http://marklogic.com/xdmp/schematron" 
+      at "/MarkLogic/schematron/schematron.xqy";
+
+schematron:validate(fn:doc("/schema-demo/user001.xml"),
+                    schematron:get("/userSchema.sch"))
+
+ 
+ 
+ 
  
  i. Load schema
  

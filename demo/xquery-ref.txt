@@ -335,3 +335,13 @@ for $each in $xml/emp
 where $each/salary > 1000
 order by $each/name  
 return $each
+
+==========
+Node operations
+
+Update:
+xdmp:node-delete
+xdmp:node-insert-after
+xdmp:node-insert-before
+xdmp:node-insert-child
+xdmp:node-replace
